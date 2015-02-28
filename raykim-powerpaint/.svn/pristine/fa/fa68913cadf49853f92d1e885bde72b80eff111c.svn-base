@@ -1,0 +1,99 @@
+/*
+ * TCSS 305 - Assignment 4: PowerPaint
+ */
+
+
+package model;
+
+import java.awt.Color;
+
+/**
+ * 
+ * Abstract Shape object which implements PowerPaintShape interface.
+ * 
+ * @author Ray Kim
+ * @version Autumn 2014
+ *
+ */
+public abstract class AbstractPowerPaintShape implements PowerPaintShape {
+
+    //variables
+    /**
+     * Starting x-coordinate of object.
+     */
+    private int myStartX;
+    
+    /**
+     * Starting y-coordinate of object.
+     */
+    private int myStartY;
+    
+    /**
+     * Ending x-coordinate of object.
+     */
+    private int myEndX;
+    
+    /**
+     * Ending y-coordinate of object.
+     */
+    private int myEndY;
+    
+    /**
+     * Stores stroke width.
+     */
+    private int myStrokeWidth;
+    
+    /**
+     * Stores the color of this object.
+     */
+    private Color myColor;
+    
+    /**
+     * Stores object fields that are passed in through the parameters.
+     * 
+     * @param theStrokeWidth stroke length of the object
+     * @param theColor color of the object
+     */
+    private AbstractPowerPaintShape(final int theStrokeWidth, final Color theColor) {
+        myStrokeWidth = theStrokeWidth;
+        
+        myColor = theColor;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getStartX() {
+        
+        return myStartX;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getStartY() {
+        
+        return myStartY;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getEndX() {
+        
+        return myEndX;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getEndY() {
+        
+        return myEndY;
+    }
+
+}

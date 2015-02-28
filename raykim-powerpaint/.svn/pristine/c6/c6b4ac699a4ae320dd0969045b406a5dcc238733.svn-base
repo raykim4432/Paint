@@ -1,0 +1,116 @@
+/*
+ * TCSS 305 - Assignment 4: PowerPaint
+ */
+
+package view;
+
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
+import java.util.List;
+
+/**
+ * This static class contains methods which draw the shapes in the DrawingSurfaces class.
+ * 
+ * @author Ray Kim
+ * @version Autumn 2014
+ */
+public final class DrawShapes {
+
+    /**
+     * Private constructor keeps this class from being instantiated.
+     */
+    private DrawShapes() {
+        super();
+    }
+    
+    /**
+     * Draws a series of lines based on points provided in an List passed to this method
+     * via the parameters.
+     * 
+     * @return Path2D object containing drawing.
+     * @param theStartX int containing starting x coord
+     * @param theStartY int containing starting y coord
+     * @param thePencilPoints LinkedList<int[]> containing points following theStartX and
+     * theStartY which will be connected with lines.
+     */
+    public static Path2D drawPencil(final int theStartX, final int theStartY,
+                                    final List<int[]> thePencilPoints) {
+        final Path2D linePath = new Path2D.Double();
+        
+        //start point
+        linePath.moveTo(theStartX, theStartY);
+        
+        //iterate through myPencilPoints (holds draw points captured from the
+        //mousePressed event of the actionListener myMultiPointMotion), then draw
+        //lines based on captured points
+        for (final int[] points : thePencilPoints) {
+            
+            //line drawn between each point
+            linePath.lineTo(points[0], points[1]);
+        }
+        
+        return linePath;
+    }
+    
+    /**
+     * Draws a rectangle based on the input parameters.
+     * 
+     * @return Rectangle2D containing the pencil drawing.
+     * @param theStartX int containing starting x coord
+     * @param theStartY int containing starting y coord
+     * @param theEndX int containing ending x coord
+     * @param theEndY int containing ending y coord
+     */
+    public static Rectangle2D drawRectangle(final int theStartX, final int theStartY, 
+                                            final int theEndX, final int theEndY) {
+        final Rectangle2D rectangle;
+        
+        if (theStartX < theEndX && theStartY < theEndY) { //drawing bottom right quadrant
+            rectangle = new Rectangle2D.Double(theStartX, theStartY, 
+                                             theEndX - theStartX, theEndY - theStartY);
+        } else if (theStartX > theEndX && theStartY < theEndY) { //bottom left quadrant
+            rectangle = new Rectangle2D.Double(theEndX, theStartY, 
+                                               theStartX - theEndX, theEndY - theStartY);
+        } else if (theStartX < theEndX && theStartY > theEndY) { //top right quadrant
+            rectangle = new Rectangle2D.Double(theStartX, theEndY, 
+                                               theEndX - theStartX, theStartY - theEndY);
+        } else { //top left quadrant
+            rectangle = new Rectangle2D.Double(theEndX, theEndY, 
+                                               theStartX - theEndX, theStartY - theEndY);
+        }
+        
+        return rectangle;
+    }
+    
+    
+    /**
+     * Draws a ellipse based on the input parameters.
+     * 
+     * @return Rectangle2D containing the pencil drawing.
+     * @param theStartX int containing starting x coord
+     * @param theStartY int containing starting y coord
+     * @param theEndX int containing ending x coord
+     * @param theEndY int containing ending y coord
+     */
+    public static Ellipse2D drawEllipse(final int theStartX, final int theStartY, 
+                                        final int theEndX, final int theEndY) {
+        final Ellipse2D ellipse;
+        
+        if (theStartX < theEndX && theStartY < theEndY) { //drawing bottom right quadrant
+            ellipse = new Ellipse2D.Double(theStartX, theStartY, 
+                                             theEndX - theStartX, theEndY - theStartY);
+        } else if (theStartX > theEndX && theStartY < theEndY) { //bottom left quadrant
+            ellipse = new Ellipse2D.Double(theEndX, theStartY, 
+                                               theStartX - theEndX, theEndY - theStartY);
+        } else if (theStartX < theEndX && theStartY > theEndY) { //top right quadrant
+            ellipse = new Ellipse2D.Double(theStartX, theEndY, 
+                                               theEndX - theStartX, theStartY - theEndY);
+        } else { //top left quadrant
+            ellipse = new Ellipse2D.Double(theEndX, theEndY, 
+                                               theStartX - theEndX, theStartY - theEndY);
+        }
+        
+        return ellipse;
+    }
+}

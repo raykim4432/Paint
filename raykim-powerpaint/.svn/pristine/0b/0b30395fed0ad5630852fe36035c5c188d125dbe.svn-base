@@ -1,0 +1,178 @@
+/*
+ * TCSS 305 - Assignment 4: PowerPaint
+ */
+
+package view;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+
+import javax.swing.JPanel;
+import javax.swing.event.MouseInputAdapter;
+
+/**
+ * The panel that contains the surface on which pictures are drawn.
+ * 
+ * @author Ray Kim
+ * @version Autumn 2014
+ */
+public class DrawingSurface extends JPanel {
+
+    //constants
+    /**
+     * Draw area width.
+     */
+    public static final int PANEL_WIDTH = 550;
+    
+    /**
+     * Draw area height.
+     */
+    public static final int PANEL_HEIGHT = 300;
+    
+    //variables
+    /**
+     * Stores x-coord where mouse was pressed.
+     */
+    private int myStartX;
+    
+    /**
+     * Stores y-coord where mouse was pressed.
+     */
+    private int myStartY;
+    
+    /**
+     * Stores x-coord where mouse was released.
+     */
+    private int myEndX;
+    
+    /**
+     * Stores y-coord where mouse was released.
+     */
+    private int myEndY;
+    
+    /**
+     * Contains the current stroke size.
+     */
+    private final int myCurrentStroke;
+    
+    /**
+     * Reference to the GUI object.
+     */
+    private final Tools myCurrentTool;
+
+    /**
+     * The color passed into the constructor.
+     */
+    private final Color myCurrentColor;
+    
+    
+    /**
+     * Constructor takes in a reference to the current GUI object.
+     * 
+     * @param theTool current tool selected in main GUI
+     * @param theColor current color selected in main GUI
+     * @param theStroke current stroke size selected in main GUI
+     */
+    public DrawingSurface(final Tools theTool, final Color theColor, final int theStroke) {
+        super();
+        
+        myCurrentTool = theTool;
+        
+        myCurrentColor = theColor;
+        
+        myCurrentStroke = theStroke;
+        
+        //set background layout color invisible
+        setOpaque(true);
+        
+        //set panel size
+        setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
+        
+        //set bg color
+        setBackground(Color.WHITE);
+        
+        //set mouse listener
+        final MouseMotionEffects mouseMotionEffects = new MouseMotionEffects();
+        final MouseInputEffects mouseInputEffects = new MouseInputEffects();
+        addMouseMotionListener(mouseMotionEffects);
+        addMouseListener(mouseInputEffects);
+    }
+    
+    /**
+     * Draws onto the drawing area part of the GUI.
+     * 
+     * @param theGraphics graphics object passed in by parent method.
+     */
+    @Override
+    public void paintComponent(final Graphics theGraphics) {
+        super.paintComponent(theGraphics);
+        
+        //convert to Graphics2D class
+        final Graphics2D graphics = (Graphics2D) theGraphics;
+        
+        //smooth the drawings
+        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+                                  RenderingHints.VALUE_ANTIALIAS_ON);
+        
+        
+        //set drawing color
+        graphics.setColor(myCurrentColor);
+        
+        //set stroke thickness
+        graphics.setStroke(new BasicStroke(myCurrentStroke));
+        
+        switch (myCurrentTool) {
+            case PENCIL:
+                graphics.drawLine(myStartX, myStartY, myEndX, myEndY);
+                
+                break;
+            case LINE:
+                graphics.drawLine(0, 0, 100, 100);
+                break;
+            case RECTANGLE:
+                graphics.drawRect(100, 100, 100, 100);
+                break;
+            default:
+                graphics.drawOval(100, 100, 100, 100);
+                
+                break;
+                
+        }
+        
+        repaint();
+        
+    } //end of paintComponent
+    
+    
+    private class MouseMotionEffects extends MouseMotionAdapter {
+        
+        
+        
+        public void mouseDragged(final MouseEvent theEvent) {
+            
+            myEndX = theEvent.getX();
+            myEndY = theEvent.getY();
+        }
+        
+        public void mouseReleased(final MouseEvent theEvent) {
+            
+            myEndX = theEvent.getX();
+            myEndY = theEvent.getY();
+        }
+    }
+    
+    private class MouseInputEffects extends MouseInputAdapter {
+        public void mousePressed(final MouseEvent theEvent) {
+            
+            myStartX = theEvent.getX();
+            myStartY = theEvent.getY();
+        }
+    }
+    
+}

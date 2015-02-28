@@ -1,0 +1,36 @@
+/*
+ * TCSS 305 - Assignment 4: PowerPaint
+ */
+
+
+package model;
+
+import view.PowerPaintGUI;
+
+/**
+ * Abstract method for PerformAction. Adds constructor and PowerPaintGUI field.
+ * 
+ * @author Ray Kim
+ * @version Autumn 2014
+ */
+public abstract class AbstractPerformAction {
+    
+    /**
+     * Container of reference to the main GUI.
+     */
+    private final PowerPaintGUI myGUI;
+
+    /**
+     * Initializes PowerPaintGUI myGUI.
+     * 
+     * @param theGUI PowerPaintGUI object reference to main GUI.
+     */
+    public AbstractPerformAction(final PowerPaintGUI theGUI) {
+        myGUI = theGUI;
+    }
+
+    /**
+     * The specific Action on GUI taken by each child of this class.
+     */
+    public abstract void actionOnGUI();
+}

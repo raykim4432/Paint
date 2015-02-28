@@ -1,0 +1,55 @@
+/*
+ * TCSS 305 - Assignment 4: PowerPaint
+ */
+
+package model;
+
+/**
+ * 
+ * Interface which stores the methods for each shape object.
+ * 
+ * @author Ray Kim
+ * @version Autumn 2014
+ *
+ */
+public interface PowerPaintShape {
+
+    /**
+     * 
+     * Retrieves the x-coordinate from where the PowerPaintShape object begins.
+     * (x-coord of where the mouse drag begins / first mouse click in building this object)
+     * 
+     * @return int x-coordinate
+     */
+    int getStartX();
+    
+    /**
+     * 
+     * Retrieves the y-coordinate from where the PowerPaintShape object begins.
+     * (y-coord of where the mouse drag begins / first mouse click in building this object)
+     * 
+     * @return int y-coordinate
+     */
+    int getStartY();
+    
+    /**
+     * 
+     * Retrieves the x-coordinate from where the PowerPaintShape object ends.
+     * (x-coord of where the mouse drag ends / last mouse click in building this object)
+     * 
+     * @return int x-coordinate
+     */
+    int getEndX();
+    
+    /**
+     * 
+     * Retrieves the y-coordinate from where the PowerPaintShape object ends.
+     * (y-coord of where the mouse drag ends / last mouse click in building this object)
+     * 
+     * @return int y-coordinate
+     */
+    int getEndY();
+    
+    
+    
+}

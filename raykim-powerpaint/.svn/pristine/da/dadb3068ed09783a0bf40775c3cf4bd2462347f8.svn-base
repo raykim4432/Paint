@@ -1,0 +1,38 @@
+/*
+ * TCSS 305 - Assignment 4: PowerPaint
+ */
+
+
+package controller;
+
+import view.PowerPaintGUI;
+
+/**
+ * Only contains the action performed when the class' associated JMenutItem is clicked.
+ * 
+ * @author Ray Kim
+ * @version Autumn 2014
+ */
+public final class Exit extends AbstractPerformAction {
+    
+
+    /**
+     * Initializes PowerPaintGUI variable.
+     * @param theGUI reference to the main GUI.
+     */
+    public Exit(final PowerPaintGUI theGUI) {
+        super(theGUI);
+        
+    }
+
+    /**
+     * Closes the GUI.
+     * 
+     */
+    @Override
+    public void actionOnGUI() {
+        System.exit(0);
+        
+    }
+
+}

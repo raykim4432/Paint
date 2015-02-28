@@ -1,0 +1,105 @@
+/*
+ * TCSS 305 - Assignment 5: PowerPaint
+ */
+
+package model;
+
+import java.awt.Color;
+import java.awt.Shape;
+import java.awt.geom.Line2D;
+
+/**
+ * This class extends AbstractPowerPaintShape. This class contains a method to 
+ * draw a line in the GUI.
+ * 
+ * @author Ray Kim
+ * @version Autumn 2014
+ */
+public class PowerLine extends AbstractPowerPaintShape {
+
+    //variables
+    /**
+     * Stores the ending x coord.
+     */
+    private int myEndX;
+    
+    /**
+     * Stores the ending xy coord.
+     */
+    private int myEndY;
+    
+    /**
+     * Creates a line. The theEndX and theEndY are initially given the same values as
+     * theStartX and theStartY.
+     * 
+     * @param theStartX int containing starting x coord
+     * @param theStartY int containing starting y coord
+     * @param theEndX int containing ending x coord
+     * @param theEndY int containing ending y coord
+     * @param theStrokeWidth int width of stroke
+     * @param theColor Color of drawing
+     */
+    public PowerLine(final int theStartX, final int theStartY, final int theEndX,
+                        final int theEndY, final int theStrokeWidth, final Color theColor) {
+        super(theStartX, theStartY, theStrokeWidth, theColor);
+        
+        myEndX = theEndX;
+        myEndY = theEndY;
+        
+    }
+
+    /**
+     * This method creates a line based on starting and ending coordinate information
+     * stored in this object.
+     * 
+     * @return Line2D line object.
+     */
+    @Override
+    public Shape createDrawing() {
+        final Line2D line = new Line2D.Double(getStartX(), getStartY(), myEndX, myEndY);
+        
+        return line;
+    }
+
+    //getter methods
+     /**
+     *  Retrieves the x-coordinate from where the PowerPaintShape object ends.
+     * (x-coord of where the mouse drag ends / last mouse click in building this object)
+     * 
+     * @return myEndX int x coord
+     */
+    public int getEndX() {
+         
+        return myEndX;
+    }
+    
+     /**
+     * Retrieves the y-coordinate from where the PowerPaintShape object ends.
+     * (y-coord of where the mouse drag ends / last mouse click in building this object)
+     * 
+     * @return myEndY int y coord
+     */
+    public int getEndY() {
+         
+        return myEndY;
+    }
+    
+    //setter methods
+    /**
+     * Sets the ending x coordinate.
+     * 
+     * @param theEndX int ending x coord.
+     */
+    public void setEndX(final int theEndX) {
+        myEndX = theEndX;
+    }
+    
+    /**
+     * Sets the ending y coordinate.
+     * 
+     * @param theEndY int ending y coord.
+     */
+    public void setEndY(final int theEndY) {
+        myEndY = theEndY;
+    }
+}

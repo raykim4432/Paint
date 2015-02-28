@@ -1,0 +1,23 @@
+/*
+ * TCSS 305 - Assignment 4: PowerPaint
+ */
+
+package model;
+
+/**
+ * This interface forces its implementors to implement a method that performs a
+ * function in the GUI.
+ * 
+ * @author Ray Kim
+ * @version Autumn 2014
+ */
+public interface PerformAction {
+
+
+   /**
+    * Action called by the GUI.
+    * 
+    */
+    void actionOnGUI();
+    
+}

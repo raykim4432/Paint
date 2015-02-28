@@ -1,0 +1,544 @@
+/*
+ * TCSS 305 - Assignment 4: PowerPaint
+ */
+
+package view;
+
+import java.awt.AWTKeyStroke;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
+import javax.swing.Action;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JSlider;
+import javax.swing.JToolBar;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.MouseInputAdapter;
+
+import model.Exit;
+
+/**
+ * 
+ * GUI for PowerPaint.
+ * 
+ * @author Ray Kim
+ * @version Autumn 2014
+ *
+ */
+public class PowerPaintGUI {
+
+    //constants
+    /**
+     * Variable used to represent separators in JMENU_STRINGS array.
+     */
+    public static final String SEPARATOR = "|";
+    
+    /**
+     * String that stores Colors...
+     */
+    public static final String COLORS = "Colors...";
+    
+    /**
+     * Stores the default tool string.
+     */
+    public static final String DEFAULT_TOOL = "Pencil";
+    
+    /**
+     * String that stores Tools String.
+     */
+    public static final String TOOLS = "Tools";
+    
+
+    /**
+     * Default stroke size.
+     */
+    public static final int DEFAULT_STROKE = 5;
+    
+    /**
+     * JSlider max value.
+     */
+    public static final int STROKE_MAX = 20;
+    
+    /**
+     * JSlider major tick intervals.
+     */
+    public static final int MAJOR_TICK_INTERVALS = 5;
+    
+    /**
+     * JSlider minor tick intervals.
+     */
+    public static final int MINOR_TICK_INTERVALS = 1;
+    
+    /**
+     * Stores button insets.
+     */
+    public static final int VERTICAL_INSETS = 5;
+    
+    /**
+     * Stores button horizontal insets.
+     */
+    public static final int HORIZONTAL_INSETS = 20;
+    
+    /**
+     * This 2D array contains the Menu names(as the first String in the 2nd dimensional array) 
+     * followed by the menu options (the other Strings in the 2nd dimensional array)
+     * SEPARATOR signifies a separator.
+     * 
+     * The 3d dimension specifies which letter of the String in the 2nd dimension will have
+     * a mnemonic key associated with it. If null is used for the 3d dimension string, the
+     * first letter of the 2nd dimension String will be used as the mnemonic key.
+     * 
+     * Strings not at index [x][0] but with an * are also menus.
+     * 
+     * Values from Enum class Tools are not added to this list.
+     */
+    public static final String[][][] JMENU_STRINGS = {
+        {{"File", null}, {"Clear", null}, {SEPARATOR}, {"Exit", "1"}}, 
+        {{"Edit", null}, {"Undo", null}, {"Redo", null}}, 
+        {{"Options", null}, {"Grid", null}, {"Thickness*", null}}, 
+        {{TOOLS, null}, {COLORS, null}, {SEPARATOR}}, 
+        {{"Help", null}, {"About...", null}}};
+    
+    
+    //variables
+    /**
+     * Contains the current stroke size.
+     */
+    private int myCurrentStroke;
+    
+    /**
+     * JFrame (borderlayout) that contains all GUI objects.
+     */
+    private JFrame myMainFrame;
+    
+    /**
+     * ImageIcon that stores main frame icon and ...
+     */
+//    private final ImageIcon myFrameIcon;
+    
+    /**
+     * Stores the current tool selected.
+     */
+    private Tools myCurrentTool;
+    
+    /**
+     * Stores current sketch color.
+     */
+    private Color myCurrentColor;
+    
+    /**
+     * Map that contains all JMenu and JMenuItem objects.
+     */
+    private final Map<String, JComponent> myMenuMap;
+    
+    /**
+     * Map that contains the toolbar JButtons.
+     */
+    private final Map<String, JComponent> myToolbarButtonsMap;
+    
+
+    //constructors and methods 
+    /**
+     * Initializes final objects for this class.
+     */
+    public PowerPaintGUI() {
+        //load image for frame and ... icons
+//        myFrameIcon = new ImageIcon(getClass().getResource("icons/color.png"));
+
+        myToolbarButtonsMap = new HashMap<>();
+        
+        myMenuMap = new HashMap<>();
+        
+    }
+    
+    /**
+     * Method that builds the GUI.
+     * Calls methods that create frame, panels, buttons, menus.
+     */
+    public void start() {
+        
+        //create main Frame object
+        createFrame();
+        
+        //create menu (all items besides tool drop downs)
+        createMenu();
+        
+        //create and add stroke JSlider to menu
+        createJSlider();
+        
+        //create toolbar (also creates buttons and JMenuItems)
+        createToolbar();
+        
+        //set defaults
+        myCurrentTool = Tools.PENCIL;
+        ((JMenuItem) myMenuMap.get(DEFAULT_TOOL)).setSelected(true);
+        ((JRadioButton) myToolbarButtonsMap.get(DEFAULT_TOOL)).setSelected(true);
+        
+        myCurrentColor = Color.BLACK;
+        
+        myCurrentStroke = DEFAULT_STROKE;
+        
+        //create draw space
+        createDrawArea();
+        myMainFrame.pack();
+        
+    } //end of start
+    
+    
+    /**
+     * This method creates the main JFrame.
+     */
+    private void createFrame() {
+        myMainFrame = new JFrame("TCSS 305 PowerPaint");
+        myMainFrame.setLayout(new BorderLayout());
+        myMainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        //center frame
+        myMainFrame.setLocationRelativeTo(null);
+        
+        //set bg to white and make visible
+        myMainFrame.setVisible(true);
+        
+        //replace default JFrame icon
+//        myMainFrame.setIconImage(myFrameIcon.getImage());
+        
+    } //end of createFrame
+    
+    
+    /**
+     * This method creates the top menu.
+     */
+    private void createMenu() {
+ 
+        //create new JMenuBar
+        final JMenuBar mainMenu = new JMenuBar();
+        
+        //set menu bar on main JFrame
+        myMainFrame.setJMenuBar(mainMenu);
+        
+        //create and add JMenus and JMenuItems. The first String values in the 2nd dimensional
+        //array of JMENU_STRINGS are JMenus. The second and following successive Strings
+        //are drop down items.
+        //SEPARATOR signifies a separator.
+        for (int i = 0; i < JMENU_STRINGS.length; i++) {
+            //create new JMenu
+            final JMenu tempJMenu = new JMenu(JMENU_STRINGS[i][0][0]);
+            
+            //add new JMenu to Map myMenuMap
+            myMenuMap.put(JMENU_STRINGS[i][0][0], tempJMenu);
+            
+            //adding drop downs (to menuList and then the actual GUI menus)
+            for (int j = 1; j < JMENU_STRINGS[i].length; j++) {
+                
+                if (JMENU_STRINGS[i][j][0].equals(SEPARATOR)) { 
+                    //create separator in current JMenu
+                    tempJMenu.addSeparator();
+                } else {
+                    final AbstractButton tempJMenuItem;
+                    
+                    //if the String has an asterisk(is menu)
+                    if (JMENU_STRINGS[i][j][0].charAt(JMENU_STRINGS[i][j][0].length()
+                                                      - 1) == '*') {
+                        //create a new JMenu(name stripped of *)
+                        final String nameWithoutAsterisk = JMENU_STRINGS[i][j][0].
+                                                        substring(0, JMENU_STRINGS[i][j][0].
+                                                                  length() - 1);
+                        tempJMenuItem = new JMenu(nameWithoutAsterisk);
+                        
+                        //add newly created JMenuItem to HashMap myMenuMap
+                        myMenuMap.put(nameWithoutAsterisk, tempJMenuItem);
+                        
+                    } else { //if not a menu
+                        //create a new JMenuItem
+                        tempJMenuItem = new JMenuItem(JMENU_STRINGS[i][j][0]);
+                        
+                        //create action listeners
+                        tempJMenuItem.addActionListener(new ActionListener() {
+
+                            /**
+                             * Calls the actionOnGUI method of this menuItem
+                             */
+                            @Override
+                            public void actionPerformed(final ActionEvent theEvent) {
+                                
+                                
+                            }
+                            
+                        });
+                        
+                        //add newly created JMenuItem to HashMap myMenuMap
+                        myMenuMap.put(JMENU_STRINGS[i][j][0], tempJMenuItem);
+                    }
+
+                     
+                    //add newly created JMenuItem to current JMenu
+                    tempJMenu.add(tempJMenuItem);
+                    
+                    //set mnemonic for MenuItem
+                    //the numerical value of the string stored in JMENU_STRINGS[i][j][1]
+                    //is used to get the letter from JMENU_STRINGS[i][j][0] that is used
+                    //as the mnemonic key
+                    //set mnemonic for JMenuItem
+                    configureMnemonic((AbstractButton) tempJMenuItem, JMENU_STRINGS[i][j][0], 
+                                     JMENU_STRINGS[i][j][1]);
+                }
+                
+            } //end of inner for
+            
+            //add newly created drop down menu to mainMenu
+            mainMenu.add(tempJMenu);
+            
+            //set mnemonic for Menu
+            configureMnemonic((AbstractButton) tempJMenu, JMENU_STRINGS[i][0][0], 
+                            JMENU_STRINGS[i][0][1]);
+            
+            
+            
+        } //end of outer for
+        
+    } //end of createMenu
+    
+    /**
+     * This method creates a JSlider object to set stroke size.
+     */
+    private void createJSlider() {
+        
+        final JSlider strokeSlider = new JSlider(JSlider.HORIZONTAL, 
+                                                 0, STROKE_MAX, DEFAULT_STROKE);
+        
+        //set tick incrementation
+        strokeSlider.setMajorTickSpacing(MAJOR_TICK_INTERVALS);
+        strokeSlider.setMinorTickSpacing(MINOR_TICK_INTERVALS);
+        strokeSlider.setPaintTicks(true);
+        strokeSlider.setSnapToTicks(true);
+        strokeSlider.setPaintLabels(true);
+        
+        //add JSlider to Thickness menu
+        ((JMenu) myMenuMap.get("Thickness")).add(strokeSlider);
+        
+        //add change listener
+        strokeSlider.addChangeListener(new ChangeListener() {
+
+            /**
+             * Retrieves the value the slider is set to.
+             */
+            @Override
+            public void stateChanged(final ChangeEvent theEvent) {
+                myCurrentStroke = strokeSlider.getValue();
+                
+            }
+            
+        });
+    }
+    
+    
+    /**
+     * This method creates the toolbar and tool drop down items.
+     */
+    private void createToolbar() {
+        //create toolbar container
+        final JToolBar toolBar = new JToolBar();
+        myMainFrame.add(toolBar, BorderLayout.SOUTH);
+        
+        //create JButton for color
+        final JButton jButton = new JButton(COLORS);
+        toolBar.add(jButton);
+        myToolbarButtonsMap.put(COLORS, jButton);
+        
+        //create button group for toolbar buttons
+        final ButtonGroup toolbarButtonGroup = new ButtonGroup();
+        
+        //create group for JMenu items
+        final ButtonGroup menuButtonGroup = new ButtonGroup();
+        
+        //create Set to store taken mnemonic letters
+        final Set<Character> takenMnemonics = new TreeSet<>();
+        
+        //create JButtons for toolbar, then JMenuItems for Menu
+        for (final Tools tool : Tools.values()) {
+            
+            //create anonymous AbstractAction for button/jmenuItem of current tool
+            Action tempAction = new AbstractAction(tool.getName()) {
+
+                /**
+                 * Sets myCurrentTool to the tool associated with the button clicked.
+                 */
+                @Override
+                public void actionPerformed(final ActionEvent theEvent) {
+                    //set current tool
+                    myCurrentTool = tool;
+                    
+                    //in Menu, set current tool to checked
+                    ((JMenuItem) myMenuMap.get(tool.getName())).setSelected(true);
+                    
+                    //in toolbar, set current tool as selected
+                    ((JRadioButton) myToolbarButtonsMap.get(tool.getName())).setSelected(true);
+                }
+                
+            };
+            
+            //create JRadioButton for toolbar buttons. 
+            final JRadioButton jRadioButton = new JRadioButton(tempAction);
+            
+            //place newly created button into Map
+            myToolbarButtonsMap.put(tool.getName(), jRadioButton);
+            
+            //set button bordering
+            jRadioButton.setMargin(new Insets(VERTICAL_INSETS, HORIZONTAL_INSETS, 
+                                              VERTICAL_INSETS, HORIZONTAL_INSETS));
+            jRadioButton.setBorderPainted(true);
+                
+            //add button to group
+            toolbarButtonGroup.add(jRadioButton);
+            
+            //add button to toolBar
+            toolBar.add(jRadioButton);
+            
+            
+            //create JMenuItem
+            final JRadioButtonMenuItem tempJMenuItem = new JRadioButtonMenuItem(tempAction);
+            
+            //place newly created JMenuItem into map myMenuMap
+            myMenuMap.put(tool.getName(), tempJMenuItem);
+            
+            //place JMenu item into group
+            menuButtonGroup.add(tempJMenuItem);
+            
+            //place newly created JMenuItem into menu
+            ((JMenu) myMenuMap.get(TOOLS)).add(tempJMenuItem);
+            
+            //set mnemonic
+            //check to see mnemonic is already taken
+            int letterIndex = 0;
+            //check if first EOR following letters are stored in takenMnemonics
+            //checks are done on lowercases
+            while (takenMnemonics.contains(Character.toLowerCase(tool.getName().
+                                                                 charAt(letterIndex)))) {
+                letterIndex++;
+            } 
+
+            //add mnemonic letter to takenMnemonics(lowercase)
+            takenMnemonics.add(Character.toLowerCase(tool.getName().charAt(letterIndex)));
+            
+            //convert letterIndex to String
+            final String mnemonicIndex = String.valueOf(letterIndex);
+            
+            //set mnemonic as tool.getname() at letterIndex
+            configureMnemonic((AbstractButton) tempJMenuItem, tool.getName(), mnemonicIndex);
+            
+            
+        } //end of foreach loop
+        
+    } //end of createToolbar    
+    
+    /**
+     * This method creates the draw area container, which creates a new DrawingSurface
+     * and layers it over the previous one.
+     */
+    private void createDrawArea() {
+           
+        //create first drawing window
+        final DrawingSurface drawArea = new DrawingSurface(myCurrentTool, 
+                                                           myCurrentColor, 
+                                                           myCurrentStroke);
+        myMainFrame.add(drawArea, BorderLayout.CENTER);
+        
+        //on click of drawAreaContainer, a new DrawingSurface object is
+        //created and layered on top of the previous.
+        myMainFrame.addMouseListener(new MouseInputAdapter() {
+            
+            /**
+             * Creates a new DrawingSurface object.
+             * @param theEvent unused event which triggered this event.
+             */
+            @Override
+            public void mouseClicked(final MouseEvent theEvent) {
+                
+                
+            }
+        });
+        
+    }
+    
+    /**
+     * This method takes in a button/MenuItem type object (as an AbstractButton),
+     * and set its mnemonic key to be the letter in theLabelName at index theIndex.
+     * 
+     * @param theButton that will have the mnemonic key set on it
+     * @param theLabelName name on button or menu/menu item
+     * @param theIndex used to get letter from String theLabelName. null parameter means use
+     * index of 0
+     */
+    private void configureMnemonic(final AbstractButton theButton, 
+                                final String theLabelName, 
+                                final String theIndex) {
+        
+        final int intIndex;
+        
+        //check if null was put in for theIndex
+        if (theIndex == null) {
+            intIndex = 0;
+        } else {
+            //convert String index to number
+            intIndex = Character.getNumericValue(theIndex.charAt(0));
+        }
+        
+        final char mnemonicLetter = Character.toLowerCase(theLabelName.charAt(intIndex));
+        
+        final int mnemonicKey = AWTKeyStroke.getAWTKeyStroke(mnemonicLetter).getKeyCode();
+        
+        //underline the letter that will signify the nmemonic
+        theButton.setDisplayedMnemonicIndex(intIndex);
+        
+        //set mnemonic key
+        theButton.setMnemonic(mnemonicKey);
+        
+    }
+    
+    /**
+     * This method returns the currently selected tool.
+     * @return Tools myCurrentTool
+     */
+    public Tools getCurrentTool() {
+        return myCurrentTool;
+    }
+    
+    /**
+     * This method returns the current color.
+     * @return Color myCurrentColor
+     */
+    public Color getCurrentColor() {
+        return myCurrentColor;
+    }
+    
+    /**
+     * This method returns the current stroke size.
+     * @return int myCurrentStroke
+     */
+    public int getStroke() {
+        return myCurrentStroke;
+    }
+    
+}
